@@ -2,7 +2,7 @@ import UIKit
 
 final class ChatViewController: UIViewController, UITableViewDataSource, UITextViewDelegate {
     private var messages: [ChatMessage] = []
-    private let client = ClaudeClient()
+    private let client = ChatClient()
     private var streaming = false
     private var renderPending = false
 
@@ -15,7 +15,7 @@ final class ChatViewController: UIViewController, UITableViewDataSource, UITextV
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Claude"
+        title = "Gemini"
         view.backgroundColor = .appBackground
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New", style: .plain, target: self, action: #selector(newChat))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Key", style: .plain, target: self, action: #selector(askKey))
@@ -199,16 +199,24 @@ final class ChatViewController: UIViewController, UITableViewDataSource, UITextV
     }
 
     @objc private func askKey() {
-        let a = UIAlertController(title: "Anthropic API key", message: "Stored in Keychain on this device.", preferredStyle: .alert)
+        let a = UIAlertController(title: "Gemini API key", message: "Key is stored in Keychain on this device. Leave key empty to keep the old one.", preferredStyle: .alert)
         a.addTextField { tf in
-            tf.placeholder = "sk-ant-..."
+            tf.placeholder = "AIza..."
             tf.isSecureTextEntry = true
             tf.autocapitalizationType = .none
             tf.autocorrectionType = .no
         }
-        a.addAction(UIAlertAction(title: "Save", style: .default) { _ in
+        a.addTextField { tf in
+            tf.placeholder = "Model"
+            tf.text = ChatClient.model
+            tf.autocapitalizationType = .none
+            tf.autocorrectionType = .no
+        }
+        a.addAction(UIAlertAction(title: "Save", style: .default) { [weak a] _ in
+            guard let a = a else { return }
             let k = a.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             if !k.isEmpty { Keychain.save(k) }
+            if let m = a.textFields?.last?.text { ChatClient.model = m }
         })
         a.addAction(UIAlertAction(title: "Delete key", style: .destructive) { _ in Keychain.delete() })
         a.addAction(UIAlertAction(title: "Cancel", style: .cancel))
