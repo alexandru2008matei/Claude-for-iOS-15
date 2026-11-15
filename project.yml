@@ -1,0 +1,39 @@
+name: ClaudeChat
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "12.0"
+targets:
+  ClaudeChat:
+    type: application
+    platform: iOS
+    sources:
+      - path: .
+        excludes:
+          - project.yml
+          - build.sh
+          - Info.plist
+          - build
+          - Payload
+          - "*.ipa"
+          - "*.xcodeproj"
+          - ".github"
+          - "*.md"
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: Claude Chat
+        UILaunchStoryboardName: LaunchScreen
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.claudechat
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ENABLE_BITCODE: NO
+      configs:
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          SWIFT_COMPILATION_MODE: wholemodule
+          DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+          STRIP_INSTALLED_PRODUCT: YES
